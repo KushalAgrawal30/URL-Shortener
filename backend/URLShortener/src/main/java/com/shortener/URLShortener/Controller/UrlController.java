@@ -19,5 +19,4 @@ public class UrlController {
         return urlService.createShortUrl(urlRequest);
     }
 
-
 }
