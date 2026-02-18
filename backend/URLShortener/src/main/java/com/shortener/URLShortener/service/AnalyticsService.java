@@ -6,6 +6,7 @@ import com.shortener.URLShortener.Repo.ClickRepository;
 import com.shortener.URLShortener.Repo.UrlRepository;
 import com.shortener.URLShortener.dto.AnalyticsResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 public class AnalyticsService {
+
+//    private final StringRedisTemplate redisTemplate;
 
     private final ClickRepository clickRepository;
     private final UrlRepository urlRepository;
@@ -28,9 +31,13 @@ public class AnalyticsService {
     }
 
     public AnalyticsResponse getAnalysis(String code){
+
+//        redisTemplate.opsForValue().set("test", "hello");
+//        String value = redisTemplate.opsForValue().get("test");
+//        System.out.println(value);
+
         Url url = urlRepository.findByShortCode(code)
                 .orElseThrow(() -> new RuntimeException("URL Not found!"));
-
 
         long total = clickRepository.countByShortCode(code);
         return AnalyticsResponse.builder()

@@ -1,8 +1,8 @@
 package com.shortener.URLShortener.Controller;
 
 import com.shortener.URLShortener.Entity.Url;
-import com.shortener.URLShortener.Repo.UrlRepository;
 import com.shortener.URLShortener.service.AnalyticsService;
+import com.shortener.URLShortener.service.UrlService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +19,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class UrlRedirect {
 
-    private final UrlRepository urlRepository;
     private final AnalyticsService analyticsService;
+    private final UrlService urlService;
 
     @GetMapping("/r/{code}")
     public void redirect(@PathVariable String code,
@@ -31,10 +31,10 @@ public class UrlRedirect {
         String userAgent = request.getHeader("User-Agent");
 
 
-        Url url = urlRepository.findByShortCode(code)
-                .orElseThrow(() -> new RuntimeException("URL Not found!"));
+        Url url = urlService.getUrlByCode(code);
 
         if(!url.isActive() || (url.getExpiryAt() != null && url.getExpiryAt().isBefore(LocalDateTime.now()))){
+            System.out.println(url.isActive());
             response.sendError(HttpServletResponse.SC_GONE);
             return;
         }

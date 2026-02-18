@@ -27,6 +27,7 @@ public class Url{
     private LocalDateTime createdAt;
     private LocalDateTime expiryAt;
 
-    private boolean isActive;
+    @Column(name = "is_active")
+    private boolean active;
 
 }
