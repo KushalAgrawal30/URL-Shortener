@@ -5,7 +5,9 @@ import com.shortener.URLShortener.Repo.UserRepository;
 import com.shortener.URLShortener.dto.CreateUrlRequest;
 import com.shortener.URLShortener.dto.UrlResponse;
 import com.shortener.URLShortener.service.UrlService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +23,7 @@ public class UrlController {
     private final UrlService urlService;
 
     @PostMapping
-    public Url createShortUrl(@RequestBody CreateUrlRequest urlRequest){
+    public Url createShortUrl(@Valid @RequestBody CreateUrlRequest urlRequest){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         return urlService.createShortUrl(urlRequest, email);
