@@ -1,4 +1,4 @@
-package com.shortener.URLShortener.config;
+package com.shortener.URLShortener.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

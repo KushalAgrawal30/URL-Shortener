@@ -1,4 +1,4 @@
-package com.shortener.URLShortener.util;
+package com.shortener.URLShortener.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

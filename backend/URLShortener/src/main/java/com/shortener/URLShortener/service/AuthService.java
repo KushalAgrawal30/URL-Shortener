@@ -2,11 +2,11 @@ package com.shortener.URLShortener.service;
 
 import com.shortener.URLShortener.Entity.User;
 import com.shortener.URLShortener.Repo.UserRepository;
-import com.shortener.URLShortener.config.SecurityBeans;
+import com.shortener.URLShortener.security.SecurityBeans;
 import com.shortener.URLShortener.dto.AuthResponse;
 import com.shortener.URLShortener.dto.LoginRequest;
 import com.shortener.URLShortener.dto.RegisterRequest;
-import com.shortener.URLShortener.util.JwtUtil;
+import com.shortener.URLShortener.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

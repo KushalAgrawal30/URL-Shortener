@@ -21,7 +21,7 @@ public class AnalyticsService {
     private final UrlRepository urlRepository;
 
     public void recordClick(String shortCode, String ip, String userAgent){
-        Click click =   Click.builder()
+        Click click =  Click.builder()
                 .shortCode(shortCode)
                 .ipAddress(ip)
                 .userAgent(userAgent)
@@ -30,13 +30,9 @@ public class AnalyticsService {
         click = clickRepository.save(click);
     }
 
-    public AnalyticsResponse getAnalysis(String code){
+    public AnalyticsResponse getAnalysis(String code, String email){
 
-//        redisTemplate.opsForValue().set("test", "hello");
-//        String value = redisTemplate.opsForValue().get("test");
-//        System.out.println(value);
-
-        Url url = urlRepository.findByShortCode(code)
+        Url url = urlRepository.findByShortCodeAndUser_Email(code, email)
                 .orElseThrow(() -> new RuntimeException("URL Not found!"));
 
         long total = clickRepository.countByShortCode(code);

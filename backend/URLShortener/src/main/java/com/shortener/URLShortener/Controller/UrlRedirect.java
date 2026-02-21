@@ -7,9 +7,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -35,8 +37,7 @@ public class UrlRedirect {
 
         if(!url.isActive() || (url.getExpiryAt() != null && url.getExpiryAt().isBefore(LocalDateTime.now()))){
             System.out.println(url.isActive());
-            response.sendError(HttpServletResponse.SC_GONE);
-            return;
+            throw new ResponseStatusException(HttpStatus.GONE);
         }
         try {
             analyticsService.recordClick(url.getShortCode(), ip, userAgent);
