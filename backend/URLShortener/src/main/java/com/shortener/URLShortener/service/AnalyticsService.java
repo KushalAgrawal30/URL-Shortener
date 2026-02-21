@@ -5,6 +5,7 @@ import com.shortener.URLShortener.Entity.Url;
 import com.shortener.URLShortener.Repo.ClickRepository;
 import com.shortener.URLShortener.Repo.UrlRepository;
 import com.shortener.URLShortener.dto.AnalyticsResponse;
+import com.shortener.URLShortener.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class AnalyticsService {
     public AnalyticsResponse getAnalysis(String code, String email){
 
         Url url = urlRepository.findByShortCodeAndUser_Email(code, email)
-                .orElseThrow(() -> new RuntimeException("URL Not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("URL Not found!"));
 
         long total = clickRepository.countByShortCode(code);
         return AnalyticsResponse.builder()

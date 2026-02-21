@@ -2,6 +2,9 @@ package com.shortener.URLShortener.service;
 
 import com.shortener.URLShortener.Entity.User;
 import com.shortener.URLShortener.Repo.UserRepository;
+import com.shortener.URLShortener.exception.BadRequestException;
+import com.shortener.URLShortener.exception.ResourceNotFoundException;
+import com.shortener.URLShortener.exception.UnauthorizedException;
 import com.shortener.URLShortener.security.SecurityBeans;
 import com.shortener.URLShortener.dto.AuthResponse;
 import com.shortener.URLShortener.dto.LoginRequest;
@@ -19,10 +22,10 @@ public class AuthService {
 
     public void register(RegisterRequest registerRequest){
         if(userRepository.existsByEmail(registerRequest.getEmail())){
-            throw new RuntimeException("Email already exists!");
+            throw new BadRequestException("Email already exists!");
         }
         if(userRepository.existsByUsername(registerRequest.getUsername())){
-            throw new RuntimeException("Username already exists!");
+            throw new BadRequestException("Username already exists!");
         }
 
         String encodedPassword = securityBeans.passwordEncoder().encode(registerRequest.getPassword());
@@ -38,10 +41,10 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest loginRequest){
         User user = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid Credentials"));
+                .orElseThrow(() -> new UnauthorizedException("Invalid Credentials"));
 
         if(!securityBeans.passwordEncoder().matches(loginRequest.getPassword(), user.getPassword())){
-            throw new RuntimeException("Invalid Credentials");
+            throw new UnauthorizedException("Invalid Credentials");
         }
 
         String token = jwtUtil.generateToken(loginRequest.getEmail());

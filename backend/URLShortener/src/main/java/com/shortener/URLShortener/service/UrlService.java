@@ -6,6 +6,7 @@ import com.shortener.URLShortener.Repo.UrlRepository;
 import com.shortener.URLShortener.Repo.UserRepository;
 import com.shortener.URLShortener.dto.CreateUrlRequest;
 import com.shortener.URLShortener.dto.UrlResponse;
+import com.shortener.URLShortener.exception.ResourceNotFoundException;
 import com.shortener.URLShortener.util.Base62Encoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +34,7 @@ public class UrlService {
 
     public Url createShortUrl(CreateUrlRequest request, String email){
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Url url = Url.builder()
                 .longUrl(request.getLongUrl())
@@ -59,7 +60,6 @@ public class UrlService {
     }
 
 
-
     public Url getUrlByCode(String code){
         String key = "url:"+code;
 
@@ -67,7 +67,7 @@ public class UrlService {
         if(url==null){
             System.out.println("Fetch from DB");
             url = urlRepository.findByShortCode(code)
-                    .orElseThrow(() -> new RuntimeException("URL Not found!"));
+                    .orElseThrow(() -> new ResourceNotFoundException("URL Not found!"));
             if(url.isActive() && (url.getExpiryAt()!=null && !url.getExpiryAt().isBefore(LocalDateTime.now()))){
                 long remainingSeconds = Duration.between(LocalDateTime.now(), url.getExpiryAt()).getSeconds();
                 long ttlToUse = Math.min(remainingSeconds, cacheTtlMinutes) + ThreadLocalRandom.current().nextLong(0,30);
@@ -82,7 +82,7 @@ public class UrlService {
 
     public void deactivateUrl(String shortCode, String email){
         Url url = urlRepository.findByShortCodeAndUser_Email(shortCode, email)
-                .orElseThrow(() -> new RuntimeException("URL not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("URL not found"));
 
         url.setActive(false);
         urlRepository.save(url);
