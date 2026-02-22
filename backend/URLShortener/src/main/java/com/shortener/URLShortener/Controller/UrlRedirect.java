@@ -34,7 +34,7 @@ public class UrlRedirect {
         String ip = request.getRemoteAddr();
         String userAgent = request.getHeader("User-Agent");
 
-        rateLimitService.checkRateLimit("rate:redirect:"+ip, 10, 60);
+        rateLimitService.checkRateLimit("rate:redirect:"+ip, 100, 60);
 
         Url url = urlService.getUrlByCode(code);
 
