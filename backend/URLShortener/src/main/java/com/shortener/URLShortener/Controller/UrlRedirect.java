@@ -2,6 +2,7 @@ package com.shortener.URLShortener.Controller;
 
 import com.shortener.URLShortener.Entity.Url;
 import com.shortener.URLShortener.service.AnalyticsService;
+import com.shortener.URLShortener.service.RateLimitService;
 import com.shortener.URLShortener.service.UrlService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,6 +24,7 @@ public class UrlRedirect {
 
     private final AnalyticsService analyticsService;
     private final UrlService urlService;
+    private final RateLimitService rateLimitService;
 
     @GetMapping("/r/{code}")
     public void redirect(@PathVariable String code,
@@ -32,6 +34,7 @@ public class UrlRedirect {
         String ip = request.getRemoteAddr();
         String userAgent = request.getHeader("User-Agent");
 
+        rateLimitService.checkRateLimit("rate:redirect:"+ip, 10, 60);
 
         Url url = urlService.getUrlByCode(code);
 

@@ -27,6 +27,7 @@ public class UrlService {
 
     private final UrlRepository urlRepository;
     private final UserRepository userRepository;
+    private final RateLimitService rateLimitService;
 
     private final RedisTemplate<String, Url> redisTemplate;
 
@@ -36,6 +37,8 @@ public class UrlService {
     public Url createShortUrl(CreateUrlRequest request, String email){
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        rateLimitService.checkRateLimit("rate:user:"+email, 5, 60);
 
         String shotCode;
 
