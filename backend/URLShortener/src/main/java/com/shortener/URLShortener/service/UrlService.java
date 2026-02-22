@@ -6,6 +6,7 @@ import com.shortener.URLShortener.Repo.UrlRepository;
 import com.shortener.URLShortener.Repo.UserRepository;
 import com.shortener.URLShortener.dto.CreateUrlRequest;
 import com.shortener.URLShortener.dto.UrlResponse;
+import com.shortener.URLShortener.exception.BadRequestException;
 import com.shortener.URLShortener.exception.ResourceNotFoundException;
 import com.shortener.URLShortener.util.Base62Encoder;
 import lombok.RequiredArgsConstructor;
@@ -36,27 +37,40 @@ public class UrlService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        String shotCode;
+
+        if (request.getCustomAlias() != null && request.getCustomAlias().isBlank()) {
+            request.setCustomAlias(null);
+        }
+
+        if(request.getCustomAlias()!=null && !request.getCustomAlias().isEmpty()){
+            if(urlRepository.existsByShortCode(request.getCustomAlias())){
+                throw new BadRequestException("Custom alias already exists.");
+            }
+            shotCode = request.getCustomAlias();
+        }else{
+            shotCode = null;
+        }
+
+
         Url url = Url.builder()
                 .longUrl(request.getLongUrl())
                 .createdAt(LocalDateTime.now())
                 .expiryAt(request.getExpiryAt())
                 .active(true)
                 .user(user)
+                .shortCode(shotCode)
                 .build();
 
         url = urlRepository.save(url);
 
-        String shotCode;
-
-        if(request.getCustomAlias()!=null && !request.getCustomAlias().isEmpty()){
-            shotCode = request.getCustomAlias();
-        }else{
+        if(shotCode == null){
             shotCode = Base62Encoder.encode(url.getId());
+            url.setShortCode(shotCode);
+            url = urlRepository.save(url);
         }
 
-        url.setShortCode(shotCode);
-
-        return urlRepository.save(url);
+        return url;
     }
 
 

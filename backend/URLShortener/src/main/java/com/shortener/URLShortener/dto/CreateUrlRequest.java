@@ -16,6 +16,10 @@ public class CreateUrlRequest {
     )
     private String longUrl;
 
+    @Pattern(
+            regexp = "^(|[a-zA-Z0-9_-]{3,20})$",
+            message = "Alias must be 3-20 characters and alphanumeric"
+    )
     private String customAlias;
 
     private LocalDateTime expiryAt;
